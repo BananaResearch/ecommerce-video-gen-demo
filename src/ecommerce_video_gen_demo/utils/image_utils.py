@@ -1,0 +1,1 @@
+BASE64_PREAMBLE = "data:image/png;base64,"
