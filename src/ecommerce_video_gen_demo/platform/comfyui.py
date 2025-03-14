@@ -2,15 +2,26 @@ import os
 from io import BytesIO
 import requests
 import json
-from time import time
+from time import time, sleep
 from typing import Dict
-from PIL import Image
+from ecommerce_video_gen_demo.utils.file_utils import generate_timestamp_filename
+import PIL
 
 COMFYUI_BASE_URL = os.getenv('COMFYUI_BASE_URL', '')
 # print('COMFYUI_BASE_URL')
 
-def upload_image():
-    pass
+def upload_image(image: PIL.Image.Image):
+    byte_io = BytesIO()
+    image.save(byte_io, format='PNG')
+    byte_io.seek(0)
+
+    url = f'{COMFYUI_BASE_URL}/api/upload/image'
+    files = { 'image': (f'{generate_timestamp_filename()}.png', byte_io, 'image/png') }
+    
+    resp = requests.post(url, files=files)
+    print('----上传结果----')
+    print(resp.text)
+    return resp.json()
 
 def get_image(filename, subfolder, folder_type):
     data = {'filename': filename, 'subfolder': subfolder, 'type': folder_type}
@@ -20,7 +31,7 @@ def get_image(filename, subfolder, folder_type):
 
 
     image_data = BytesIO(resp.content)
-    image = Image.open(image_data)
+    image = PIL.Image.open(image_data)
 
     return image
 
@@ -45,6 +56,7 @@ def wait_for_image(prompt_id: str, timeout: int = 10):
             return True
 
         current_time = time()
+        sleep(1)
         if (current_time - start_time > timeout):
             return False
 def run_workflow(prompt: Dict):
