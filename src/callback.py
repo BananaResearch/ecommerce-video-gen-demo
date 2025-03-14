@@ -1,12 +1,11 @@
-from fastapi import FastAPI, HTTPException, Request, APIRouter
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 import json
 app = FastAPI()
-router = APIRouter(prefix='/videotool')
 
-app.include_router(router)
+API_PREFIX='videotool'
 
-@router.post("/get_callback")
+@app.post(f'/{API_PREFIX}/get_callback')
 async def get_callback(request: Request):
     try:
         json_data = await request.json()
