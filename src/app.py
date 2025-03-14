@@ -17,11 +17,11 @@ print(f'COMFYUI_URL: {COMFYUI_URL}')
 
 
 def generate_image(text_input, width, height):
-    print(f'generate_image. {width}, {height}')
+    input = text_input + 'realistic image, high quality, diffuse light, highly detailed, 4k'
     prompt = {
         "1": {
             "inputs": {
-                "ckpt_name": "sd_xl_turbo_1.0_fp16.safetensors"
+                "ckpt_name": "sd_xl_basse_1.0.safetensors"
             },
             "class_type": "CheckpointLoaderSimple",
             "_meta": {
