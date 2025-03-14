@@ -7,6 +7,7 @@ from ecommerce_video_gen_demo.platform.comfyui import run_workflow, upload_image
 from ecommerce_video_gen_demo.utils.random_utils import gen_sd_seed
 from ecommerce_video_gen_demo.platform.minmax import generate_video_from_image as gvfi
 from ecommerce_video_gen_demo.utils.image_utils import img_to_base64
+from ecommerce_video_gen_demo.comfyui_workflow.flux_dev_fp8 import get_prompt_info
 import os
 
 
@@ -18,117 +19,18 @@ print(f'COMFYUI_URL: {COMFYUI_URL}')
 
 def generate_image(text_input, width, height):
     input = text_input + 'This is a high quality,diffuse light,highly detailed,4k,realistic people photograph.'
-    prompt = {
-        "1": {
-            "inputs": {
-                "ckpt_name": "flux1-dev-fp8.safetensors"
-            },
-            "class_type": "CheckpointLoaderSimple",
-            "_meta": {
-                "title": "Load Checkpoint"
-            }
-        },
-        "2": {
-            "inputs": {
-                "text": input,
-                "clip": [
-                    "1",
-                    1
-                ]
-            },
-            "class_type": "CLIPTextEncode",
-            "_meta": {
-                "title": "CLIP Text Encode (Prompt)"
-            }
-        },
-        "3": {
-            "inputs": {
-                "text": "text, water",
-                "clip": [
-                    "1",
-                    1
-                ]
-            },
-            "class_type": "CLIPTextEncode",
-            "_meta": {
-                "title": "CLIP Text Encode (Prompt)"
-            }
-        },
-        "4": {
-            "inputs": {
-                "width": width,
-                "height": height,
-                "batch_size": 1
-            },
-            "class_type": "EmptyLatentImage",
-            "_meta": {
-                "title": "Empty Latent Image"
-            }
-        },
-        "5": {
-            "inputs": {
-                "seed": gen_sd_seed(),
-                "steps": 20,
-                "cfg": 1,
-                "sampler_name": "euler",
-                "scheduler": "normal",
-                "denoise": 1,
-                "model": [
-                    "1",
-                    0
-                ],
-                "positive": [
-                    "2",
-                    0
-                ],
-                "negative": [
-                    "3",
-                    0
-                ],
-                "latent_image": [
-                    "4",
-                    0
-                ]
-            },
-            "class_type": "KSampler",
-            "_meta": {
-                "title": "KSampler"
-            }
-        },
-        "6": {
-            "inputs": {
-                "samples": [
-                    "5",
-                    0
-                ],
-                "vae": [
-                    "1",
-                    2
-                ]
-            },
-            "class_type": "VAEDecode",
-            "_meta": {
-                "title": "VAE Decode"
-            }
-        },
-        "7": {
-            "inputs": {
-                "images": [
-                    "6",
-                    0
-                ]
-            },
-            "class_type": "PreviewImage",
-            "_meta": {
-                "title": "Preview Image"
-            }
-        }
-    }
 
+    prompt_info = get_prompt_info(input, width, height)
+    prompt = prompt_info.get('prompt')
+    result_node_id = prompt_info.get('result_node_id')
     result = run_workflow(prompt)
 
-    print(result)
-    return result[0].get('images')[0]
+    node_result = next((node for node in result if node['node_id'] == result_node_id) , None)
+
+    if (node_result is None):
+        raise Exception('未找到结果')
+
+    return node_result.get('images')[0]
 
 
 def generate_video_from_image(img, prompt: str):

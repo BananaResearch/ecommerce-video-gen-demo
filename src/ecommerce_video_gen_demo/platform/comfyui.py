@@ -59,6 +59,9 @@ def wait_for_image(prompt_id: str, timeout: int = 30):
         sleep(1)
         if (current_time - start_time > timeout):
             return False
+
+
+
 def run_workflow(prompt: Dict):
     ret = run_prompt_api(prompt)
     prompt_id = ret.get('prompt_id') 
