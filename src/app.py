@@ -17,11 +17,11 @@ print(f'COMFYUI_URL: {COMFYUI_URL}')
 
 
 def generate_image(text_input, width, height):
-    input = text_input + 'realistic image, high quality, diffuse light, highly detailed, 4k'
+    input = text_input + 'This is a high quality,diffuse light,highly detailed,4k,realistic people photograph.'
     prompt = {
         "1": {
             "inputs": {
-                "ckpt_name": "sd_xl_basse_1.0.safetensors"
+                "ckpt_name": "flux1-dev-fp8.safetensors"
             },
             "class_type": "CheckpointLoaderSimple",
             "_meta": {
@@ -30,7 +30,7 @@ def generate_image(text_input, width, height):
         },
         "2": {
             "inputs": {
-                "text": text_input,
+                "text": input,
                 "clip": [
                     "1",
                     1
@@ -69,7 +69,7 @@ def generate_image(text_input, width, height):
             "inputs": {
                 "seed": gen_sd_seed(),
                 "steps": 20,
-                "cfg": 8,
+                "cfg": 1,
                 "sampler_name": "euler",
                 "scheduler": "normal",
                 "denoise": 1,
@@ -259,8 +259,8 @@ def main(*, server_port):
         with gr.Row():
             with gr.Column():
                 prompt_input = gr.Textbox(label="输入提示", lines=3)
-                width_input = gr.Number(label='宽度', value=512)
-                height_input = gr.Number(label='高度', value=1024)
+                width_input = gr.Number(label='宽度', value=768)
+                height_input = gr.Number(label='高度', value=1365)
                 generate_button = gr.Button("生成")
 
             with gr.Column():

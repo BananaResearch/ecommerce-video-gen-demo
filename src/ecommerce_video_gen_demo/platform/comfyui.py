@@ -46,7 +46,7 @@ def run_prompt_api(prompt: Dict) -> Dict:
 
     return resp.json()
 
-def wait_for_image(prompt_id: str, timeout: int = 10):
+def wait_for_image(prompt_id: str, timeout: int = 30):
     start_time = time()
     while True:
         history_result = get_history_api(prompt_id)
