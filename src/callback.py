@@ -34,7 +34,7 @@ if __name__ == "__main__":
     uvicorn.run(
         app, # 必选
         host="0.0.0.0", # 必选
-        port=8000, # 必选，端口可设置
+        port=8001, # 必选，端口可设置
         # ssl_keyfile='yourname.yourDomainName.com.key', # 可选，看是否开启ssl
         # ssl_certfile='yourname.yourDomainName.com.key', # 可选，看是否开启ssl
     )
