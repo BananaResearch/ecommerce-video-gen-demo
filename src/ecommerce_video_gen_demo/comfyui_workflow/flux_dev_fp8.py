@@ -110,7 +110,7 @@ def get_prompt_info(prompt: str, width: int, height: int):
         },
         "35": {
             "inputs": {
-                "guidance": 3.5,
+                "guidance": 2,
                 "conditioning": [
                     "6",
                     0

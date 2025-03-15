@@ -149,7 +149,7 @@ def generate_remove_bg_ui():
             image_upload = gr.Image(type="pil", label="上传图片")
             generate_button = gr.Button("去除背景")
         with gr.Column():
-            output_image = gr.Image(label="输出图像")
+            output_image = gr.Image(label="输出图像", format='png')
 
         generate_button.click(fn=generate_remove_bg, inputs=[
                               image_upload], outputs=output_image)
@@ -166,7 +166,7 @@ def main(*, server_port):
                 generate_button = gr.Button("生成")
 
             with gr.Column():
-                output_image = gr.Image(label="输出图像")
+                output_image = gr.Image(label="输出图像", format="png")
                 generate_button.click(
                     fn=generate_image, inputs=[prompt_input, width_input, height_input], outputs=output_image)
 
