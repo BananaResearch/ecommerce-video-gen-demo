@@ -2,7 +2,11 @@ from ecommerce_video_gen_demo.utils.random_utils import gen_sd_seed
 from ecommerce_video_gen_demo.comfyui_workflow.typing import ComfyuiWorkflowResult
 
 
-def get_prompt_info(image_name: str, prompt: str, height: int) -> ComfyuiWorkflowResult:
+IMAGE_SIZE_LIST = ["704x1408 (0.5)", "704x1344 (0.52)", "768x1344 (0.57)", "768x1280 (0.6)", "832x1216 (0.68)", "832x1152 (0.72)", "896x1152 (0.78)", "896x1088 (0.82)", "960x1088 (0.88)", "960x1024 (0.94)", "1024x1024 (1.0)", "1024x960 (1.07)", "1088x960 (1.13)",
+                   "1088x896 (1.21)", "1152x896 (1.29)", "1152x832 (1.38)", "1216x832 (1.46)", "1280x768 (1.67)", "1344x768 (1.75)", "1344x704 (1.91)", "1408x704 (2.0)", "1472x704 (2.09)", "1536x640 (2.4)", "1600x640 (2.5)", "1664x576 (2.89)", "1728x576 (3.0)",]
+
+
+def get_prompt_info(image_name: str, prompt: str, height: int, resolution: str) -> ComfyuiWorkflowResult:
     prompt_dict = {
         "1": {
             "inputs": {
@@ -116,7 +120,7 @@ def get_prompt_info(image_name: str, prompt: str, height: int) -> ComfyuiWorkflo
         },
         "616": {
             "inputs": {
-                "resolution": "768x1344 (0.57)",
+                "resolution": resolution,
                 "batch_size": 1,
                 "width_override": 0,
                 "height_override": 0

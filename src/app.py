@@ -7,7 +7,7 @@ from ecommerce_video_gen_demo.utils.random_utils import gen_sd_seed
 from ecommerce_video_gen_demo.platform.minmax import generate_video_from_image as gvfi
 from ecommerce_video_gen_demo.utils.image_utils import img_to_base64
 from ecommerce_video_gen_demo.comfyui_workflow.flux_dev_fp8 import get_prompt_info
-from ecommerce_video_gen_demo.comfyui_workflow.replace_background import get_prompt_info as replace_bg_prompt_info
+from ecommerce_video_gen_demo.comfyui_workflow.replace_background import get_prompt_info as replace_bg_prompt_info, IMAGE_SIZE_LIST
 import os
 
 app = FastAPI()
@@ -156,7 +156,7 @@ def generate_replace_bg_ui():
     gr.HTML('<hr>')
     gr.Markdown("# 替换背景")
 
-    def replace_bg(image: PIL.Image.Image, prompt: str, height: int):
+    def generate_replace_bg(image: PIL.Image.Image, prompt: str, height: int, resolution: str):
         if not image:
             raise gr.Error('未上传图片')
 
@@ -172,7 +172,7 @@ def generate_replace_bg_ui():
         result = upload_image(image)
         image_name = result.get('name')
 
-        prompt_info = replace_bg_prompt_info(image_name, prompt, height)
+        prompt_info = replace_bg_prompt_info(image_name, prompt, height, resolution)
         prompt = prompt_info.get('prompt')
         result_node_id = prompt_info.get('result_node_id')
         result = run_workflow(prompt)
@@ -190,12 +190,13 @@ def generate_replace_bg_ui():
         with gr.Column():
             image_upload = gr.Image(type="pil", label="上传图片")
             prompt_input = gr.Textbox(label="输入新背景提示词", lines=4)
-            height = gr.Number(label='高度', value=1368)
-            generate_button = gr.Button("去除背景")
+            height = gr.Number(label='输入图片重绘高度', value=1368)
+            resolution = gr.Dropdown(IMAGE_SIZE_LIST, label='生成图片尺寸', )
+            generate_button = gr.Button("替换背景")
         with gr.Column():
             output_image = gr.Image(label="输出图片", format='png')
 
-            generate_button.click(fn=replace_bg, inputs=[image_upload, prompt_input, height], outputs=output_image)
+            generate_button.click(fn=generate_replace_bg, inputs=[image_upload, prompt_input, height, resolution], outputs=output_image)
             
             
 
