@@ -1,9 +1,9 @@
+import loadenv
 import gradio as gr
 import PIL
 from fastapi import FastAPI
 import uvicorn
 from ecommerce_video_gen_demo.platform.comfyui import run_workflow, upload_image
-from ecommerce_video_gen_demo.utils.random_utils import gen_sd_seed
 from ecommerce_video_gen_demo.platform.minmax import generate_video_from_image as gvfi
 from ecommerce_video_gen_demo.utils.image_utils import img_to_base64
 from ecommerce_video_gen_demo.comfyui_workflow.flux_dev_fp8 import get_prompt_info
@@ -145,7 +145,7 @@ def generate_remove_bg_ui():
     with gr.Row():
         with gr.Column():
             image_upload = gr.Image(type="pil", label="上传图片")
-            generate_button = gr.Button("替换背景")
+            generate_button = gr.Button("去除背景")
         with gr.Column():
             output_image = gr.Image(label="输出图片", format='png')
 
