@@ -1,11 +1,12 @@
-import PIL
+from ecommerce_video_gen_demo.utils.random_utils import gen_sd_seed
+from ecommerce_video_gen_demo.comfyui_workflow.typing import ComfyuiWorkflowResult
 
 
-def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
+def get_prompt_info(image_name: str, prompt: str, height: int) -> ComfyuiWorkflowResult:
     prompt_dict = {
         "1": {
             "inputs": {
-                "image": "C28C802B-379C-4C6C-A75C-DB2B95F5EAA6.png"
+                "image": image_name
             },
             "class_type": "LoadImage",
             "_meta": {
@@ -14,7 +15,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
         },
         "7": {
             "inputs": {
-                "invert_mask": true,
+                "invert_mask": True,
                 "blend_mode": "normal",
                 "opacity": 100,
                 "x_percent": [
@@ -115,7 +116,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
         },
         "616": {
             "inputs": {
-                "resolution": "1344x768 (1.75)",
+                "resolution": "768x1344 (0.57)",
                 "batch_size": 1,
                 "width_override": 0,
                 "height_override": 0
@@ -134,7 +135,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
                 "method": "lanczos",
                 "round_to_multiple": "8",
                 "scale_to_side": "longest",
-                "scale_to_length": 1400,
+                "scale_to_length": height,
                 "background_color": "#000000",
                 "image": [
                     "1",
@@ -269,7 +270,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
         },
         "692": {
             "inputs": {
-                "seed": 472036261688001,
+                "seed": gen_sd_seed(),
                 "steps": 6,
                 "cfg": 2,
                 "sampler_name": "dpmpp_sde",
@@ -303,12 +304,12 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
                     "images": [
                         {
                             "name": "A",
-                            "selected": true,
+                            "selected": True,
                             "url": "/comfyui/api/view?filename=rgthree.compare._temp_sgyht_00001_.png&type=temp&subfolder=&rand=0.29877686446247775"
                         },
                         {
                             "name": "B",
-                            "selected": true,
+                            "selected": True,
                             "url": "/comfyui/api/view?filename=rgthree.compare._temp_sgyht_00002_.png&type=temp&subfolder=&rand=0.39289518105040466"
                         }
                     ]
@@ -354,7 +355,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
         },
         "717": {
             "inputs": {
-                "text": "A young girl standing in the middle of a bustling city street filled with skyscrapers of varying heights. Tall and short buildings line up densely, creating an impressive urban landscape. In the foreground, there is heavy traffic consisting of cars and buses moving slowly in queue, adding to the vibrant city life.",
+                "text": prompt,
                 "clip": [
                     "714",
                     1
@@ -385,7 +386,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
                 "detail_dilate": 4,
                 "black_point": 0.01,
                 "white_point": 0.99,
-                "process_detail": true,
+                "process_detail": True,
                 "device": "cuda",
                 "max_megapixels": 2,
                 "image": [
@@ -530,7 +531,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
             "inputs": {
                 "mask_threshold": 250,
                 "gaussblur_radius": 7,
-                "invert_mask": false,
+                "invert_mask": False,
                 "images": [
                     "696",
                     0
@@ -564,7 +565,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
                 "detail_dilate": 2,
                 "black_point": 0.01,
                 "white_point": 0.99,
-                "process_detail": true,
+                "process_detail": True,
                 "device": "cuda",
                 "max_megapixels": 2,
                 "image": [
@@ -595,7 +596,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
         },
         "938": {
             "inputs": {
-                "invert_mask": false,
+                "invert_mask": False,
                 "grow": 4,
                 "blur": 4,
                 "mask": [
@@ -641,7 +642,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
         },
         "943": {
             "inputs": {
-                "seed": 472036261687966,
+                "seed": gen_sd_seed(),
                 "steps": 4,
                 "cfg": 1,
                 "sampler_name": "dpmpp_sde",
@@ -671,7 +672,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
         },
         "947": {
             "inputs": {
-                "noise_mask": true,
+                "noise_mask": True,
                 "positive": [
                     "942",
                     0
@@ -700,7 +701,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
         },
         "948": {
             "inputs": {
-                "invert_mask": false,
+                "invert_mask": False,
                 "grow": 3,
                 "blur": 3,
                 "mask": [
@@ -735,12 +736,12 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
                     "images": [
                         {
                             "name": "A",
-                            "selected": true,
+                            "selected": True,
                             "url": "/comfyui/api/view?filename=rgthree.compare._temp_pivsg_00001_.png&type=temp&subfolder=&rand=0.07381208237847936"
                         },
                         {
                             "name": "B",
-                            "selected": true,
+                            "selected": True,
                             "url": "/comfyui/api/view?filename=rgthree.compare._temp_pivsg_00002_.png&type=temp&subfolder=&rand=0.5691941866286261"
                         }
                     ]
@@ -830,7 +831,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
         },
         "1154": {
             "inputs": {
-                "invert_mask": false,
+                "invert_mask": False,
                 "grow": 0,
                 "blur": 0,
                 "mask": [
@@ -847,7 +848,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
             "inputs": {
                 "mask_opacity": 1,
                 "mask_color": "127, 127, 127",
-                "pass_through": true,
+                "pass_through": True,
                 "image": [
                     "649",
                     0
@@ -876,7 +877,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
         },
         "1229": {
             "inputs": {
-                "invert_mask": false,
+                "invert_mask": False,
                 "grow": 0,
                 "blur": 1,
                 "mask": [
@@ -895,12 +896,12 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
                     "images": [
                         {
                             "name": "A",
-                            "selected": true,
+                            "selected": True,
                             "url": "/comfyui/api/view?filename=rgthree.compare._temp_xnjzs_00001_.png&type=temp&subfolder=&rand=0.5093542343068362"
                         },
                         {
                             "name": "B",
-                            "selected": true,
+                            "selected": True,
                             "url": "/comfyui/api/view?filename=rgthree.compare._temp_xnjzs_00002_.png&type=temp&subfolder=&rand=0.1630764279631649"
                         }
                     ]
@@ -949,7 +950,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
             "inputs": {
                 "x": 0,
                 "y": 0,
-                "resize_source": false,
+                "resize_source": False,
                 "destination": [
                     "929",
                     0
@@ -1025,7 +1026,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
             "inputs": {
                 "x": 0,
                 "y": 0,
-                "resize_source": false,
+                "resize_source": False,
                 "destination": [
                     "929",
                     0
@@ -1075,12 +1076,12 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
                     "images": [
                         {
                             "name": "A",
-                            "selected": true,
+                            "selected": True,
                             "url": "/comfyui/api/view?filename=rgthree.compare._temp_bgygo_00001_.png&type=temp&subfolder=&rand=0.8985924020742857"
                         },
                         {
                             "name": "B",
-                            "selected": true,
+                            "selected": True,
                             "url": "/comfyui/api/view?filename=rgthree.compare._temp_bgygo_00002_.png&type=temp&subfolder=&rand=0.4179920379340074"
                         }
                     ]
@@ -1141,7 +1142,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
             "inputs": {
                 "x": 0,
                 "y": 0,
-                "resize_source": false,
+                "resize_source": False,
                 "destination": [
                     "929",
                     0
@@ -1183,12 +1184,12 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
                     "images": [
                         {
                             "name": "A",
-                            "selected": true,
+                            "selected": True,
                             "url": "/comfyui/api/view?filename=rgthree.compare._temp_gqgxx_00001_.png&type=temp&subfolder=&rand=0.3471551464014633"
                         },
                         {
                             "name": "B",
-                            "selected": true,
+                            "selected": True,
                             "url": "/comfyui/api/view?filename=rgthree.compare._temp_gqgxx_00002_.png&type=temp&subfolder=&rand=0.8417762421110262"
                         }
                     ]
@@ -1213,12 +1214,12 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
                     "images": [
                         {
                             "name": "A",
-                            "selected": true,
+                            "selected": True,
                             "url": "/comfyui/api/view?filename=rgthree.compare._temp_pejjq_00001_.png&type=temp&subfolder=&rand=0.19895223402496875"
                         },
                         {
                             "name": "B",
-                            "selected": true,
+                            "selected": True,
                             "url": "/comfyui/api/view?filename=rgthree.compare._temp_pejjq_00002_.png&type=temp&subfolder=&rand=0.5010840569093853"
                         }
                     ]
@@ -1240,7 +1241,7 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
         "1580": {
             "inputs": {
                 "image": "$1580-0",
-                "block": false,
+                "block": False,
                 "restore_mask": "never",
                 "images": [
                     "484",
@@ -1263,6 +1264,24 @@ def get_prompt_info(image: PIL.Image.Image, prompt: str, height: int):
             "_meta": {
                 "title": "Anything Everywhere"
             }
+        },
+        "1601": {
+            "inputs": {
+                "images": [
+                    "1276",
+                    0
+                ]
+            },
+            "class_type": "PreviewImage",
+            "_meta": {
+                "title": "Final Preview Image"
+            }
         }
     }
-    pass
+
+    result_node = '1601'
+
+    return {
+        "prompt": prompt_dict,
+        "result_node_id": result_node,
+    }

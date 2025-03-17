@@ -1,21 +1,20 @@
-import loadenv
-import base64
 import gradio as gr
 import PIL
 from fastapi import FastAPI
+import uvicorn
 from ecommerce_video_gen_demo.platform.comfyui import run_workflow, upload_image
 from ecommerce_video_gen_demo.utils.random_utils import gen_sd_seed
 from ecommerce_video_gen_demo.platform.minmax import generate_video_from_image as gvfi
 from ecommerce_video_gen_demo.utils.image_utils import img_to_base64
 from ecommerce_video_gen_demo.comfyui_workflow.flux_dev_fp8 import get_prompt_info
+from ecommerce_video_gen_demo.comfyui_workflow.replace_background import get_prompt_info as replace_bg_prompt_info
 import os
 
-
+app = FastAPI()
 
 # 假设 comfyui 的图片生成接口地址如下
 COMFYUI_URL = os.getenv('COMFYUI_BASE_URL')
 print(f'COMFYUI_URL: {COMFYUI_URL}')
-
 
 def generate_image(text_input, width, height):
     input = text_input + 'This is a high quality,diffuse light,highly detailed,4k,realistic people photograph.'
@@ -44,7 +43,6 @@ def generate_video_from_image(img, prompt: str):
 
 
 def generate_video_from_image_ui():
-    gr.HTML('<hr>')
     gr.Markdown("## 从图片生成视频")
     with gr.Row():
         with gr.Column():
@@ -147,34 +145,87 @@ def generate_remove_bg_ui():
     with gr.Row():
         with gr.Column():
             image_upload = gr.Image(type="pil", label="上传图片")
-            generate_button = gr.Button("去除背景")
+            generate_button = gr.Button("替换背景")
         with gr.Column():
-            output_image = gr.Image(label="输出图像", format='png')
+            output_image = gr.Image(label="输出图片", format='png')
 
         generate_button.click(fn=generate_remove_bg, inputs=[
                               image_upload], outputs=output_image)
 
+def generate_replace_bg_ui():
+    gr.HTML('<hr>')
+    gr.Markdown("# 替换背景")
+
+    def replace_bg(image: PIL.Image.Image, prompt: str, height: int):
+        if not image:
+            raise gr.Error('未上传图片')
+
+        if not prompt:
+            raise gr.Error('未输入指令')
+        
+        if height < 500:
+            raise gr.Error('高度过低')
+
+        if height > 2000:
+            raise gr.Error('高度过高')
+
+        result = upload_image(image)
+        image_name = result.get('name')
+
+        prompt_info = replace_bg_prompt_info(image_name, prompt, height)
+        prompt = prompt_info.get('prompt')
+        result_node_id = prompt_info.get('result_node_id')
+        result = run_workflow(prompt)
+
+        node_result = next((node for node in result if node['node_id'] == result_node_id) , None)
+        print('replace bg result:', node_result)
+
+        if (node_result is None):
+            raise Exception('未找到结果')
+
+        return node_result.get('images')[0]
+        
+
+    with gr.Row():
+        with gr.Column():
+            image_upload = gr.Image(type="pil", label="上传图片")
+            prompt_input = gr.Textbox(label="输入新背景提示词", lines=4)
+            height = gr.Number(label='高度', value=1368)
+            generate_button = gr.Button("去除背景")
+        with gr.Column():
+            output_image = gr.Image(label="输出图片", format='png')
+
+            generate_button.click(fn=replace_bg, inputs=[image_upload, prompt_input, height], outputs=output_image)
+            
+            
 
 def main(*, server_port):
-    with gr.Blocks() as demo:
+    with gr.Blocks() as demo1:
         gr.Markdown("# 生成模特素材")
         with gr.Row():
             with gr.Column():
                 prompt_input = gr.Textbox(label="输入提示", lines=3)
                 width_input = gr.Number(label='宽度', value=768)
-                height_input = gr.Number(label='高度', value=1365)
+                height_input = gr.Number(label='高度', value=1368)
                 generate_button = gr.Button("生成")
 
             with gr.Column():
-                output_image = gr.Image(label="输出图像", format="png")
+                output_image = gr.Image(label="输出图片", format="png")
                 generate_button.click(
                     fn=generate_image, inputs=[prompt_input, width_input, height_input], outputs=output_image)
 
         generate_try_on_ui()
         generate_remove_bg_ui()
+        generate_replace_bg_ui()
+
+    with gr.Blocks() as demo2:
         generate_video_from_image_ui()
 
-    demo.launch(server_port=server_port, root_path='/videogen')
+
+    gr.mount_gradio_app(app, demo1, path="/videogen")
+    gr.mount_gradio_app(app, demo2, path="/videogenpro")
+
+    uvicorn.run(app, host="0.0.0.0", port=server_port)
 
 
 # 启动应用
