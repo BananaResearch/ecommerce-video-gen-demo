@@ -7,15 +7,15 @@ from typing import Dict
 from ecommerce_video_gen_demo.utils.file_utils import generate_timestamp_filename
 import PIL
 
-COMFYUI_BASE_URL = os.getenv('COMFYUI_BASE_URL', '')
-# print('COMFYUI_BASE_URL')
+def get_comfyui_base_url():
+    return os.getenv('COMFYUI_BASE_URL', '')
 
 def upload_image(image: PIL.Image.Image):
     byte_io = BytesIO()
     image.save(byte_io, format='PNG')
     byte_io.seek(0)
 
-    url = f'{COMFYUI_BASE_URL}/api/upload/image'
+    url = f'{get_comfyui_base_url()}/api/upload/image'
     files = { 'image': (f'{generate_timestamp_filename()}.png', byte_io, 'image/png') }
     
     resp = requests.post(url, files=files)
@@ -25,7 +25,7 @@ def upload_image(image: PIL.Image.Image):
 
 def get_image(filename, subfolder, folder_type):
     data = {'filename': filename, 'subfolder': subfolder, 'type': folder_type}
-    resp = requests.get(f'{COMFYUI_BASE_URL}/view', params=data)
+    resp = requests.get(f'{get_comfyui_base_url()}/view', params=data)
 
     print(resp.request.url)
 
@@ -36,13 +36,13 @@ def get_image(filename, subfolder, folder_type):
     return image
 
 def get_history_api(prompt_id: str):
-        resp = requests.get(f'{COMFYUI_BASE_URL}/history/{prompt_id}')
+        resp = requests.get(f'{get_comfyui_base_url()}/history/{prompt_id}')
         return resp.json()
 
 def run_prompt_api(prompt: Dict) -> Dict:
     p = {'prompt': prompt}
     data = json.dumps(p).encode('utf-8')
-    resp =  requests.post(f'{COMFYUI_BASE_URL}/prompt', data=data)
+    resp =  requests.post(f'{get_comfyui_base_url()}/prompt', data=data)
 
     return resp.json()
 

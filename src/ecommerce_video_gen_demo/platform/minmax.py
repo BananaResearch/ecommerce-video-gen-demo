@@ -3,8 +3,12 @@ import time
 import requests
 import json
 
-api_key = os.getenv('MINIMAX_API_KEY', '')
-api_base = os.getenv('MINIMAX_API_BASE', '')
+def get_api_key():
+    return os.getenv('MINIMAX_API_KEY', '')
+
+def get_api_base():
+    return os.getenv('MINIMAX_API_BASE', '')
+    
 
 prompt = "请在此输入生成视频的提示词文本内容"
 model = "I2V-01-Director" 
@@ -12,14 +16,14 @@ output_file_name = "output.mp4" #请在此输入生成视频的保存路径
 
 def invoke_video_generation(prompt, first_frame_image)->str:
     print("-----------------提交视频生成任务-----------------")
-    url = f"{api_base}/video_generation"
+    url = f"{get_api_base()}/video_generation"
     payload = json.dumps({
       "prompt": prompt,
       "model": model,
       'first_frame_image': first_frame_image
     })
     headers = {
-      'authorization': 'Bearer ' + api_key,
+      'authorization': 'Bearer ' + get_api_key(),
       'content-type': 'application/json',
     }
 
@@ -30,9 +34,9 @@ def invoke_video_generation(prompt, first_frame_image)->str:
     return task_id
 
 def query_video_generation(task_id: str):
-    url = f"{api_base}/query/video_generation?task_id="+task_id
+    url = f"{get_api_base()}/query/video_generation?task_id="+task_id
     headers = {
-      'authorization': 'Bearer ' + api_key
+      'authorization': 'Bearer ' + get_api_key() 
     }
     response = requests.request("GET", url, headers=headers)
     status = response.json()['status']
@@ -55,9 +59,9 @@ def query_video_generation(task_id: str):
 
 def fetch_video_url(file_id: str):
     print("---------------视频生成成功，下载中---------------")
-    url = f"{api_base}/files/retrieve?file_id="+file_id
+    url = f"{get_api_base()}/files/retrieve?file_id="+file_id
     headers = {
-        'authorization': 'Bearer '+api_key,
+        'authorization': 'Bearer '+ get_api_key(),
     }
 
     response = requests.request("GET", url, headers=headers)

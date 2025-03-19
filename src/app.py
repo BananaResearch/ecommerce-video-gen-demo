@@ -1,4 +1,3 @@
-import loadenv
 import gradio as gr
 import PIL
 from fastapi import FastAPI
@@ -10,21 +9,27 @@ from ecommerce_video_gen_demo.comfyui_workflow.flux_dev_fp8 import get_prompt_in
 from ecommerce_video_gen_demo.comfyui_workflow.replace_background import get_prompt_info as replace_bg_prompt_info, IMAGE_SIZE_LIST
 import os
 
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
+
 app = FastAPI()
 
 # 假设 comfyui 的图片生成接口地址如下
 COMFYUI_URL = os.getenv('COMFYUI_BASE_URL')
 print(f'COMFYUI_URL: {COMFYUI_URL}')
 
+
 def generate_image(text_input, width, height):
-    input = text_input + 'This is a high quality,diffuse light,highly detailed,4k,realistic people photograph.'
+    input = text_input + \
+        'This is a high quality,diffuse light,highly detailed,4k,realistic people photograph.'
 
     prompt_info = get_prompt_info(input, width, height)
     prompt = prompt_info.get('prompt')
     result_node_id = prompt_info.get('result_node_id')
     result = run_workflow(prompt)
 
-    node_result = next((node for node in result if node['node_id'] == result_node_id) , None)
+    node_result = next(
+        (node for node in result if node['node_id'] == result_node_id), None)
 
     if (node_result is None):
         raise Exception('未找到结果')
@@ -72,6 +77,7 @@ def generate_try_on_ui():
 
 
 def generate_remove_bg(image: PIL.Image.Image):
+    print('remove_bg')
     result = upload_image(image)
     file_name = result.get('name')
 
@@ -131,7 +137,7 @@ def generate_remove_bg(image: PIL.Image.Image):
             }
         }
     }
-    
+
     result = run_workflow(prompt)
 
     print(result)
@@ -152,6 +158,7 @@ def generate_remove_bg_ui():
         generate_button.click(fn=generate_remove_bg, inputs=[
                               image_upload], outputs=output_image)
 
+
 def generate_replace_bg_ui():
     gr.HTML('<hr>')
     gr.Markdown("# 替换背景")
@@ -162,7 +169,7 @@ def generate_replace_bg_ui():
 
         if not prompt:
             raise gr.Error('未输入指令')
-        
+
         if height < 500:
             raise gr.Error('高度过低')
 
@@ -172,19 +179,20 @@ def generate_replace_bg_ui():
         result = upload_image(image)
         image_name = result.get('name')
 
-        prompt_info = replace_bg_prompt_info(image_name, prompt, height, resolution)
+        prompt_info = replace_bg_prompt_info(
+            image_name, prompt, height, resolution)
         prompt = prompt_info.get('prompt')
         result_node_id = prompt_info.get('result_node_id')
         result = run_workflow(prompt)
 
-        node_result = next((node for node in result if node['node_id'] == result_node_id) , None)
+        node_result = next(
+            (node for node in result if node['node_id'] == result_node_id), None)
         print('replace bg result:', node_result)
 
         if (node_result is None):
             raise Exception('未找到结果')
 
         return node_result.get('images')[0]
-        
 
     with gr.Row():
         with gr.Column():
@@ -196,9 +204,9 @@ def generate_replace_bg_ui():
         with gr.Column():
             output_image = gr.Image(label="输出图片", format='png')
 
-            generate_button.click(fn=generate_replace_bg, inputs=[image_upload, prompt_input, height, resolution], outputs=output_image)
-            
-            
+            generate_button.click(fn=generate_replace_bg, inputs=[
+                                  image_upload, prompt_input, height, resolution], outputs=output_image)
+
 
 def main(*, server_port):
     with gr.Blocks() as demo1:
@@ -221,7 +229,6 @@ def main(*, server_port):
 
     with gr.Blocks() as demo2:
         generate_video_from_image_ui()
-
 
     gr.mount_gradio_app(app, demo1, path="/videogen")
     gr.mount_gradio_app(app, demo2, path="/videogenpro")
