@@ -8,9 +8,11 @@ from ecommerce_video_gen_demo.utils.image_utils import img_to_base64
 from ecommerce_video_gen_demo.comfyui_workflow.flux_dev_fp8 import get_prompt_info
 from ecommerce_video_gen_demo.comfyui_workflow.replace_background import get_prompt_info as replace_bg_prompt_info, IMAGE_SIZE_LIST
 import os
+from wechat_assistant.bw_appinfo import init_app_info
 
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
+init_app_info()
 
 app = FastAPI()
 

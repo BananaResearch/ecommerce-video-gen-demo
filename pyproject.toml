@@ -11,7 +11,11 @@ dependencies = [
     "pylint~=3.3.4",
     "openai~=1.61.1",
     "python_dotenv~=1.0.1",
-    "gradio~=5.20.0"
+    "gradio~=5.20.0",
+    "pycryptodome~=3.22.0",
+    "beautifulsoup4~=4.13.3",
+    "playwright~=1.51.0",
+    "python-slugify~=8.0.4"
 ]
 
 [tool.setuptools]
