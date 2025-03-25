@@ -1,6 +1,6 @@
 import gradio as gr
 import PIL
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 import uvicorn
 from ecommerce_video_gen_demo.platform.comfyui import run_workflow, upload_image
 from ecommerce_video_gen_demo.platform.minmax import generate_video_from_image as gvfi
@@ -9,6 +9,7 @@ from ecommerce_video_gen_demo.comfyui_workflow.flux_dev_fp8 import get_prompt_in
 from ecommerce_video_gen_demo.comfyui_workflow.replace_background import get_prompt_info as replace_bg_prompt_info, IMAGE_SIZE_LIST
 import os
 from wechat_assistant.bw_appinfo import init_app_info
+from wechat_assistant.faq_assistant import router as faq_router
 
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
@@ -234,6 +235,10 @@ def main(*, server_port):
 
     gr.mount_gradio_app(app, demo1, path="/videogen")
     gr.mount_gradio_app(app, demo2, path="/videogenpro")
+
+    api_router = APIRouter(prefix='/vg-api')
+    api_router.include_router(faq_router)
+    app.include_router(api_router)
 
     uvicorn.run(app, host="0.0.0.0", port=server_port)
 
