@@ -31,6 +31,7 @@ def crawl_coze_url(url: str):
 
         filtered_content_lines = list(filter(None, content_lines))
         content = '\n'.join(filtered_content_lines)
+        content = content.replace('\u200b', ' ')
 
         browser.close()
         print(f'element_text: {title}')
@@ -38,7 +39,7 @@ def crawl_coze_url(url: str):
         print('content: ', content)
 
         file_content = title + '\n' + content
-        file_name = slugify(f'{title}.txt', allow_unicode=True)
+        file_name = slugify(title, allow_unicode=True) + '.txt'
         file_path = os.path.join(dir_path, file_name)
 
         with open(file_path, 'w+', encoding='utf-8') as file:
