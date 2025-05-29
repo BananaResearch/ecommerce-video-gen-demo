@@ -55,7 +55,7 @@ def generate_video_from_image_ui():
     with gr.Row():
         with gr.Column():
             image_upload = gr.Image(type="pil", label="上传图片")
-            prompt_input = gr.Textbox(label="输入提示", lines=3)
+            prompt_input = gr.Textbox(label="输入提示词", lines=3)
 
             gr.HTML(
                 '<a href="https://vrfi1sk8a0.feishu.cn/wiki/WosowbIXtiZpZRkmiH9cZ2R6nUf" target="_blank">运镜指令说明</a>')
@@ -200,7 +200,7 @@ def generate_replace_bg_ui():
     with gr.Row():
         with gr.Column():
             image_upload = gr.Image(type="pil", label="上传图片")
-            prompt_input = gr.Textbox(label="输入新背景提示词", lines=4)
+            prompt_input = gr.Textbox(label="输入新背景提示词(只能使用英文)", lines=4)
             height = gr.Number(label='输入图片重绘高度', value=1368)
             resolution = gr.Dropdown(IMAGE_SIZE_LIST, label='生成图片尺寸', )
             generate_button = gr.Button("替换背景")
@@ -216,7 +216,7 @@ def main(*, server_port):
         gr.Markdown("# 生成模特素材")
         with gr.Row():
             with gr.Column():
-                prompt_input = gr.Textbox(label="输入提示", lines=3)
+                prompt_input = gr.Textbox(label="输入提示词(只能使用英文)", lines=3)
                 width_input = gr.Number(label='宽度', value=768)
                 height_input = gr.Number(label='高度', value=1368)
                 generate_button = gr.Button("生成")
