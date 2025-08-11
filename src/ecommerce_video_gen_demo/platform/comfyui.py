@@ -5,12 +5,16 @@ import json
 from time import time, sleep
 from typing import Dict
 from ecommerce_video_gen_demo.utils.file_utils import generate_timestamp_filename
-import PIL
+from ecommerce_video_gen_demo.utils.logger import setup_logger
+from PIL import Image
+
+# 初始化日志记录器
+logger = setup_logger(__name__)
 
 def get_comfyui_base_url():
     return os.getenv('COMFYUI_BASE_URL', '')
 
-def upload_image(image: PIL.Image.Image):
+def upload_image(image: Image.Image):
     byte_io = BytesIO()
     image.save(byte_io, format='PNG')
     byte_io.seek(0)
@@ -19,19 +23,19 @@ def upload_image(image: PIL.Image.Image):
     files = { 'image': (f'{generate_timestamp_filename()}.png', byte_io, 'image/png') }
     
     resp = requests.post(url, files=files)
-    print('----上传结果----')
-    print(resp.text)
+    logger.info('----上传结果----')
+    logger.info(f'response: {resp.text}')
     return resp.json()
 
 def get_image(filename, subfolder, folder_type):
     data = {'filename': filename, 'subfolder': subfolder, 'type': folder_type}
     resp = requests.get(f'{get_comfyui_base_url()}/view', params=data)
 
-    print(resp.request.url)
+    logger.info(f'request url: {resp.request.url}')
 
 
     image_data = BytesIO(resp.content)
-    image = PIL.Image.open(image_data)
+    image = Image.open(image_data)
 
     return image
 
@@ -44,6 +48,9 @@ def run_prompt_api(prompt: Dict) -> Dict:
     data = json.dumps(p).encode('utf-8')
     resp =  requests.post(f'{get_comfyui_base_url()}/prompt', data=data)
 
+
+    logger.info('----运行结果----')
+    logger.info(f'response: {resp.text}')
     return resp.json()
 
 def wait_for_image(prompt_id: str, timeout: int = 30):
@@ -59,7 +66,6 @@ def wait_for_image(prompt_id: str, timeout: int = 30):
         sleep(1)
         if (current_time - start_time > timeout):
             return False
-
 
 
 def run_workflow(prompt: Dict):
@@ -95,6 +101,3 @@ def run_workflow(prompt: Dict):
 
     return output_images
 
-
-
-    

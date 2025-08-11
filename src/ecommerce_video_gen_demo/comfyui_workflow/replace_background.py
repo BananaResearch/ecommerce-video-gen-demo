@@ -253,7 +253,7 @@ def get_prompt_info(image_name: str, prompt: str, height: int, resolution: str) 
         },
         "688": {
             "inputs": {
-                "control_net_name": "sdxl/diffusion_pytorch_model_promax.safetensors"
+                "control_net_name": "SDXL/controlnet-union-sdxl-1.0/diffusion_pytorch_model_promax.safetensors"
             },
             "class_type": "ControlNetLoader",
             "_meta": {

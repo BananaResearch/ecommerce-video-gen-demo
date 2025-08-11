@@ -1,5 +1,5 @@
 import gradio as gr
-import PIL
+from PIL import Image
 from fastapi import FastAPI, APIRouter
 import uvicorn
 from ecommerce_video_gen_demo.platform.comfyui import run_workflow, upload_image
@@ -10,8 +10,12 @@ from ecommerce_video_gen_demo.comfyui_workflow.replace_background import get_pro
 import os
 from wechat_assistant.bw_appinfo import init_app_info
 from wechat_assistant.faq_assistant import router as faq_router
+from ecommerce_video_gen_demo.utils.logger import setup_logger
 
 from dotenv import load_dotenv, find_dotenv
+
+# 初始化日志记录器
+logger = setup_logger(__name__)
 load_dotenv(find_dotenv())
 init_app_info()
 
@@ -19,7 +23,7 @@ app = FastAPI()
 
 # 假设 comfyui 的图片生成接口地址如下
 COMFYUI_URL = os.getenv('COMFYUI_BASE_URL')
-print(f'COMFYUI_URL: {COMFYUI_URL}')
+logger.info(f'COMFYUI_URL: {COMFYUI_URL}')
 
 
 def generate_image(text_input, width, height):
@@ -27,7 +31,7 @@ def generate_image(text_input, width, height):
         'This is a high quality,diffuse light,highly detailed,4k,realistic people photograph.'
 
     prompt_info = get_prompt_info(input, width, height)
-    prompt = prompt_info.get('prompt')
+    prompt = prompt_info.get('prompt', {})
     result_node_id = prompt_info.get('result_node_id')
     result = run_workflow(prompt)
 
@@ -76,11 +80,11 @@ def generate_try_on_ui():
     gr.HTML('<hr>')
     gr.Markdown("# AI 换衣")
     gr.HTML(
-        "<a href='https://demo.bananaresearch.cn/catvton/' target='_blank'>AI 换装</a>")
+        "<a href='https://catvton.baresearch.cn/' target='_blank'>AI 换装</a>")
 
 
-def generate_remove_bg(image: PIL.Image.Image):
-    print('remove_bg')
+def generate_remove_bg(image: Image.Image):
+    logger.info('remove_bg')
     result = upload_image(image)
     file_name = result.get('name')
 
@@ -143,7 +147,7 @@ def generate_remove_bg(image: PIL.Image.Image):
 
     result = run_workflow(prompt)
 
-    print(result)
+    logger.info(f'result: {result}')
     return result[1].get('images')[0]
 
 
@@ -166,7 +170,7 @@ def generate_replace_bg_ui():
     gr.HTML('<hr>')
     gr.Markdown("# 替换背景")
 
-    def generate_replace_bg(image: PIL.Image.Image, prompt: str, height: int, resolution: str):
+    def generate_replace_bg(image: Image.Image, prompt: str, height: int, resolution: str):
         if not image:
             raise gr.Error('未上传图片')
 
@@ -184,13 +188,13 @@ def generate_replace_bg_ui():
 
         prompt_info = replace_bg_prompt_info(
             image_name, prompt, height, resolution)
-        prompt = prompt_info.get('prompt')
+        prompt = prompt_info.get('prompt', {})
         result_node_id = prompt_info.get('result_node_id')
         result = run_workflow(prompt)
 
         node_result = next(
             (node for node in result if node['node_id'] == result_node_id), None)
-        print('replace bg result:', node_result)
+        logger.info(f'replace bg result: {node_result}')
 
         if (node_result is None):
             raise Exception('未找到结果')

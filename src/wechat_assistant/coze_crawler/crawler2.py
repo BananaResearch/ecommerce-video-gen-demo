@@ -1,7 +1,12 @@
 import os
 from slugify import slugify
 from playwright.sync_api import sync_playwright
-from wechat_assistant.coze_crawler.coze_urls import coze_urls
+# from wechat_assistant.coze_crawler.coze_urls import coze_urls
+
+coze_urls = [
+    'https://www.coze.cn/open/docs/guides/osn',
+    ...
+]
 
 dir_path = 'output/cozecrawler'
 

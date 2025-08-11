@@ -2,6 +2,10 @@ import os
 import time
 import requests
 import json
+from ecommerce_video_gen_demo.utils.logger import setup_logger
+
+# 初始化日志记录器
+logger = setup_logger(__name__)
 
 def get_api_key():
     return os.getenv('MINIMAX_API_KEY', '')
@@ -15,39 +19,43 @@ model = "I2V-01-Director"
 output_file_name = "output.mp4" #请在此输入生成视频的保存路径
 
 def invoke_video_generation(prompt, first_frame_image)->str:
-    print("-----------------提交视频生成任务-----------------")
+    logger.info("-----------------提交视频生成任务-----------------")
+
     url = f"{get_api_base()}/video_generation"
     payload = json.dumps({
       "prompt": prompt,
       "model": model,
       'first_frame_image': first_frame_image
     })
+
     headers = {
-      'authorization': 'Bearer ' + get_api_key(),
-      'content-type': 'application/json',
+      'Authorization': 'Bearer ' + get_api_key(),
+      'Content-Type': 'application/json',
     }
 
+    logger.info(f"headers: {headers}")
+    logger.info(f"url: {url}")
     response = requests.request("POST", url, headers=headers, data=payload)
-    print(response.text)
+    logger.info(f"response: {response.text}")
     task_id = response.json()['task_id']
-    print("视频生成任务提交成功，任务ID："+task_id)
+    logger.info(f"视频生成任务提交成功，任务ID：{task_id}")
     return task_id
 
 def query_video_generation(task_id: str):
     url = f"{get_api_base()}/query/video_generation?task_id="+task_id
     headers = {
-      'authorization': 'Bearer ' + get_api_key() 
+      'Authorization': 'Bearer ' + get_api_key() 
     }
     response = requests.request("GET", url, headers=headers)
     status = response.json()['status']
     if status == 'Preparing':
-        print("...准备中...")
+        logger.info("...准备中...")
         return "", 'Preparing'
     elif status == 'Queueing':
-        print("...队列中...")
+        logger.info("...队列中...")
         return "", 'Queueing'
     elif status == 'Processing':
-        print("...生成中...")
+        logger.info("...生成中...")
         return "", 'Processing'
     elif status == 'Success':
         return response.json()['file_id'], "Finished"
@@ -58,14 +66,14 @@ def query_video_generation(task_id: str):
 
 
 def fetch_video_url(file_id: str):
-    print("---------------视频生成成功，下载中---------------")
+    logger.info("---------------视频生成成功，下载中---------------")
     url = f"{get_api_base()}/files/retrieve?file_id="+file_id
     headers = {
-        'authorization': 'Bearer '+ get_api_key(),
+        'Authorization': 'Bearer '+ get_api_key(),
     }
 
     response = requests.request("GET", url, headers=headers)
-    print(response.text)
+    logger.info(f"response: {response.text}")
 
     download_url = response.json()['file']['download_url']
 
@@ -78,12 +86,12 @@ def generate_video_from_image(image_base64: str, prompt: str, *, timeout: int = 
     while True:
         file_id, status = query_video_generation(task_id)
         if file_id != "":
-            print("---------------生成成功---------------")
+            logger.info("---------------生成成功---------------")
             download_url = fetch_video_url(file_id)
-            print(f'下载链接：{download_url}')
+            logger.info(f'下载链接：{download_url}')
             return download_url
         elif status == "Fail" or status == "Unknown":
-            print("---------------生成失败---------------")
+            logger.error("---------------生成失败---------------")
             raise Exception('生成失败')
         
         time.sleep(10)

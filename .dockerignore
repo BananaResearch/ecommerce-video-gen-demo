@@ -1,0 +1,7 @@
+.gradio/
+build/
+output/
+src/__pycache__/
+src/ecommerce_video_gen_demo.egg-info/
+.env
+.venv/
