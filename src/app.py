@@ -148,7 +148,9 @@ def generate_remove_bg(image: Image.Image):
     result = run_workflow(prompt)
 
     logger.info(f'result: {result}')
-    return result[1].get('images')[0]
+    result_node = next(
+        (node for node in result if node['node_id'] == '1'), None)
+    return result_node.get('images')[0]
 
 
 def generate_remove_bg_ui():

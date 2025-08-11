@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: ecommerce-video-gen
-        image: baresearch-registry.cn-beijing.cr.aliyuncs.com/baresearch/ecommerce-video-gen:1.13
+        image: baresearch-registry.cn-beijing.cr.aliyuncs.com/baresearch/ecommerce-video-gen:1.14
         ports:
         - containerPort: 7860
         env:
